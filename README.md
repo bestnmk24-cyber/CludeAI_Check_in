@@ -1,6 +1,8 @@
 # เช็คชื่อคลาส Clude AI
 
-🌐 **เว็บไซต์:** https://bestnmk24-cyber.github.io/CludeAI_Check_in/  ·  เวอร์ชันปัจจุบัน **v1.4.0** (ดู [CHANGELOG.md](CHANGELOG.md))
+🌐 **เว็บไซต์:** https://bestnmk24-cyber.github.io/CludeAI_Check_in/  ·  เวอร์ชันปัจจุบัน **v1.5.0** (ดู [CHANGELOG.md](CHANGELOG.md))
+
+📊 **Google Sheet ที่ใช้เก็บข้อมูล:** ชีตระบบเช็คชื่อ - คลาส Clude AI (ลิงก์อยู่ใน `config.js` → `SHEET_URL`) มีแท็บ Data · รายชื่อ · บันทึกเวลา
 
 เว็บเช็คชื่อผู้เข้าเรียนแบบออนไลน์ ธีมขาว-เขียว ใช้ได้บนคอมพิวเตอร์ แท็บเล็ต และมือถือ
 ผู้เรียนกด **เช็คอิน** แล้วเซ็นชื่อบนหน้าจอ จากนั้นกด **เช็คเอาท์** ตอนออกจากคลาส
@@ -55,7 +57,7 @@ CludeAI_Check_in/
 
 > ทดสอบได้โดยเปิด `URL/exec?action=ping` ในเบราว์เซอร์ ถ้าเห็น `{"ok":true,...}` แปลว่าพร้อมแล้ว
 
-### 3) ใส่ URL ใน `config.js`
+### 3) ใส่ URL ใน `config.js` (ตั้งค่าไว้แล้วสำหรับคลาสนี้)
 
 ```js
 window.APP_CONFIG = {
