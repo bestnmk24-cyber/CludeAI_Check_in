@@ -1,5 +1,7 @@
 # เช็คชื่อคลาส Clude AI
 
+🌐 **เว็บไซต์:** https://bestnmk24-cyber.github.io/CludeAI_Check_in/  ·  เวอร์ชันปัจจุบัน **v1.4.0** (ดู [CHANGELOG.md](CHANGELOG.md))
+
 เว็บเช็คชื่อผู้เข้าเรียนแบบออนไลน์ ธีมขาว-เขียว ใช้ได้บนคอมพิวเตอร์ แท็บเล็ต และมือถือ
 ผู้เรียนกด **เช็คอิน** แล้วเซ็นชื่อบนหน้าจอ จากนั้นกด **เช็คเอาท์** ตอนออกจากคลาส
 ข้อมูลทุกครั้งจะถูกบันทึกลง **Google Sheet** โดยอัตโนมัติ
@@ -17,13 +19,14 @@
 ## โครงสร้างไฟล์
 
 ```
-clude-ai-attendance/
+CludeAI_Check_in/
 ├── index.html            หน้าเว็บ (ไฟล์เดียว รวม HTML/CSS/JS)
 ├── config.js             ตั้งค่า URL ของ Google Apps Script
+├── Code.gs               โค้ดฝั่ง Google Sheet (นำไปวางใน Apps Script)
+├── appsscript.json       ค่าตั้งของ Apps Script (ใช้เมื่อ deploy ด้วย clasp)
+├── CHANGELOG.md          ประวัติเวอร์ชัน
 ├── roster-template.csv   ตัวอย่างรูปแบบไฟล์รายชื่อ
-├── apps-script/
-│   ├── Code.gs           โค้ดฝั่ง Google Sheet (วางใน Apps Script)
-│   └── appsscript.json   ค่าตั้งของ Apps Script (ใช้เมื่อ deploy ด้วย clasp)
+├── sample-roster.csv     ไฟล์รายชื่อตัวอย่าง (ข้อมูลสมมติ)
 └── README.md
 ```
 
@@ -35,7 +38,7 @@ clude-ai-attendance/
 
 1. สร้าง Google Sheet ใหม่ ตั้งชื่อเช่น `เช็คชื่อคลาส Clude AI`
 2. ไปที่เมนู **ส่วนขยาย (Extensions) → Apps Script**
-3. ลบโค้ดเดิมในไฟล์ `Code.gs` ทิ้ง แล้ววางโค้ดจาก `apps-script/Code.gs` ทั้งหมด → กด **บันทึก** 💾
+3. ลบโค้ดเดิมในไฟล์ `Code.gs` ทิ้ง แล้ววางโค้ดจาก `Code.gs` ทั้งหมด → กด **บันทึก** 💾
 4. ที่แถบด้านบน เลือกฟังก์ชัน **`setup`** แล้วกด **เรียกใช้ (Run)**
    - Google จะขอสิทธิ์ใช้งาน Sheet และ Drive → กด **อนุญาต**
      (ถ้าขึ้นว่า "Google ไม่ได้ยืนยันแอปนี้" ให้กด *ขั้นสูง* → *ไปที่โปรเจกต์ (ไม่ปลอดภัย)* ซึ่งเป็นปกติของสคริปต์ที่เราเขียนเอง)
@@ -74,12 +77,12 @@ git init
 git add .
 git commit -m "เว็บเช็คชื่อคลาส Clude AI"
 git branch -M main
-git remote add origin https://github.com/<ชื่อผู้ใช้>/clude-ai-attendance.git
+git remote add origin https://github.com/bestnmk24-cyber/CludeAI_Check_in.git
 git push -u origin main
 ```
 
 จากนั้นที่หน้า repo บน GitHub: **Settings → Pages → Source: Deploy from a branch → Branch: `main` / `(root)`** → Save
-รอสักครู่ จะได้ลิงก์ `https://<ชื่อผู้ใช้>.github.io/clude-ai-attendance/` เปิดได้ทุกอุปกรณ์
+รอสักครู่ จะได้ลิงก์ `https://bestnmk24-cyber.github.io/CludeAI_Check_in/` เปิดได้ทุกอุปกรณ์
 
 > จะอัปโหลดไฟล์ทั้งหมดขึ้นเว็บเซิร์ฟเวอร์อื่นก็ได้เช่นกัน ขอแค่ `index.html` กับ `config.js` อยู่ในโฟลเดอร์เดียวกัน
 
@@ -95,6 +98,15 @@ git push -u origin main
 - คอลัมน์ **ลายเซ็น** เป็นลิงก์ "ดูลายเซ็น" ไปยังไฟล์รูปใน Google Drive (โฟลเดอร์ `ลายเซ็น - เช็คชื่อคลาส Clude AI`)
 - คอลัมน์ K–N เป็นข้อมูลของระบบและถูกซ่อนไว้ (คอลัมน์ O คือเวลาที่อัปเดตล่าสุด) **อย่าลบหรือย้ายคอลัมน์** เพราะหน้าเว็บอ่านข้อมูลตามตำแหน่งคอลัมน์
 - ถ้าไม่ต้องการเก็บรูปลายเซ็นลง Drive ให้แก้ `SAVE_SIGNATURE_TO_DRIVE = false` ใน `Code.gs`
+
+## เลขเวอร์ชัน
+
+- เลขเวอร์ชันแสดงที่ข้างชื่อคลาสและท้ายหน้าเว็บ กดเพื่อดูว่าแต่ละเวอร์ชันมีอะไรใหม่
+- เวลาออกเวอร์ชันใหม่ ให้แก้ 3 ที่ให้ตรงกัน:
+  1. `index.html` → `const APP_VERSION = "x.y.z"` และเพิ่มรายการใน `CHANGELOG` (อยู่ในโค้ดใกล้ๆ กัน)
+  2. `Code.gs` → `const APP_VERSION = 'x.y.z'` (แล้ว deploy สคริปต์เป็นเวอร์ชันใหม่)
+  3. `CHANGELOG.md`
+- ถ้าเวอร์ชันของหน้าเว็บกับสคริปต์ Google Sheet ไม่ตรงกัน หน้าต่าง "มีอะไรใหม่" จะเตือนให้อัปเดตสคริปต์
 
 ## แก้ไขโค้ด Apps Script ภายหลัง
 

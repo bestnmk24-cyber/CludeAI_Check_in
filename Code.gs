@@ -11,6 +11,7 @@
  *   5. คัดลอก URL ที่ลงท้ายด้วย /exec ไปใส่ใน config.js ของหน้าเว็บ
  */
 
+const APP_VERSION = '1.4.0';                   // ให้ตรงกับเวอร์ชันของหน้าเว็บ
 const TZ = 'Asia/Bangkok';
 const SHEET_ROSTER = 'รายชื่อ';
 const SHEET_ATT = 'บันทึกเวลา';
@@ -34,7 +35,7 @@ function doGet(e) {
   try {
     const p = (e && e.parameter) || {};
     const action = p.action || 'getAll';
-    if (action === 'ping') return out_({ ok: true, time: Date.now() });
+    if (action === 'ping') return out_({ ok: true, version: APP_VERSION, time: Date.now() });
     if (action === 'getAll') return out_(getAll_(p.date));
     if (action === 'getSig') return out_(getSig_(p.date, p.id));
     return out_({ ok: false, error: 'unknown action' });
@@ -181,7 +182,7 @@ function getAll_(date) {
       };
     });
   }
-  return { ok: true, date: date, roster: roster, records: records, serverTime: Date.now() };
+  return { ok: true, version: APP_VERSION, date: date, roster: roster, records: records, serverTime: Date.now() };
 }
 
 function getSig_(date, id) {

@@ -1,6 +1,10 @@
 # อย่าเก็บรายชื่อจริงของผู้เรียนไว้ใน repo สาธารณะ
 *roster*.csv
 !roster-template.csv
+!sample-roster.csv
+*.private.csv
+private/
 *.xlsx
 .DS_Store
+Thumbs.db
 .clasp.json
