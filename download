@@ -1,0 +1,6 @@
+# อย่าเก็บรายชื่อจริงของผู้เรียนไว้ใน repo สาธารณะ
+*roster*.csv
+!roster-template.csv
+*.xlsx
+.DS_Store
+.clasp.json
