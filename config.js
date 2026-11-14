@@ -8,6 +8,6 @@
  */
 window.APP_CONFIG = {
   SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyWaU_mwzWBbfumfFk7XygzU5FKSSYKDKRrwl9_OXqhSOLQwjlqpI5OB9pE0qSFnLmuag/exec",
-  SHEET_URL: "https://docs.google.com/spreadsheets/d/19h2fRrspEQd4PwUpMaust5Z8337xhia9GJdpeWu90kA/edit",
+  SHEET_URL: "https://docs.google.com/spreadsheets/d/148XmrMrioGgld0hm2Vui-Aar8Yxyf_KkRIf18kg5I_8/edit",
   POLL_SECONDS: 15
 };

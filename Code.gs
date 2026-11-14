@@ -11,10 +11,10 @@
  *   5. คัดลอก URL ที่ลงท้ายด้วย /exec ไปใส่ใน config.js ของหน้าเว็บ
  */
 
-const APP_VERSION = '1.5.0';                   // ให้ตรงกับเวอร์ชันของหน้าเว็บ
+const APP_VERSION = '1.5.1';                   // ให้ตรงกับเวอร์ชันของหน้าเว็บ
 // ID ของ Google Sheet ที่ใช้เก็บข้อมูล (ส่วนระหว่าง /d/ กับ /edit ในลิงก์ของชีต)
 // เว้นว่างได้ ถ้าสร้างสคริปต์จากเมนู ส่วนขยาย → Apps Script ของชีตนั้นโดยตรง
-const SHEET_ID = '19h2fRrspEQd4PwUpMaust5Z8337xhia9GJdpeWu90kA';
+const SHEET_ID = '148XmrMrioGgld0hm2Vui-Aar8Yxyf_KkRIf18kg5I_8';
 const TZ = 'Asia/Bangkok';
 const SHEET_ROSTER = 'รายชื่อ';
 const SHEET_ATT = 'บันทึกเวลา';

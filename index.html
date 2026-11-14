@@ -306,7 +306,7 @@ textarea.copy{width:100%;height:160px;font-family:ui-monospace,monospace;font-si
       <div class="brand">
         <div class="logo" aria-hidden="true" data-cat="face"></div>
         <div>
-          <h1>คลาส Clude AI<button class="ver" data-ver-open aria-label="ดูเวอร์ชันและสิ่งที่อัปเดต"><i></i><span data-ver>v1.5.0</span></button></h1>
+          <h1>คลาส Clude AI<button class="ver" data-ver-open aria-label="ดูเวอร์ชันและสิ่งที่อัปเดต"><i></i><span data-ver>v1.5.1</span></button></h1>
           <p>ระบบเช็คชื่อผู้เข้าเรียนออนไลน์ · กับน้องเหมียว 🐾</p>
         </div>
       </div>
@@ -382,7 +382,7 @@ textarea.copy{width:100%;height:160px;font-family:ui-monospace,monospace;font-si
     </div>
     <div id="list"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
   </section>
-  <p class="foot">🐾 คลาส Clude AI · กดปุ่ม “เช็คอิน” แล้วเซ็นชื่อเพื่อบันทึกเวลาเข้าเรียน 🐾<br><a class="vlink" data-ver-open>เวอร์ชัน <span data-ver>v1.5.0</span> · มีอะไรใหม่</a></p>
+  <p class="foot">🐾 คลาส Clude AI · กดปุ่ม “เช็คอิน” แล้วเซ็นชื่อเพื่อบันทึกเวลาเข้าเรียน 🐾<br><a class="vlink" data-ver-open>เวอร์ชัน <span data-ver>v1.5.1</span> · มีอะไรใหม่</a></p>
 </div>
 
 <!-- Check-in modal -->
@@ -586,8 +586,9 @@ function celebrate(title, sub){
 
 
 /* ================= เวอร์ชัน ================= */
-const APP_VERSION = "1.5.0";
+const APP_VERSION = "1.5.1";
 const CHANGELOG = [
+  { v: "1.5.1", d: "2026-11-14", items: ["ย้ายไปบันทึกลง Google Sheet ตัวใหม่ของคลาส (แท็บ Data · รายชื่อ · บันทึกเวลา)"] },
   { v: "1.5.0", d: "2026-11-14", items: ["เชื่อมต่อ Google Sheet ของคลาสแล้ว — เช็คอิน/เช็คเอาท์บันทึกลงชีตทันที", "บันทึกเหตุการณ์ลงแท็บ Data (timestamp, name, note) ทุกครั้งที่มีคนเช็คชื่อ", "เพิ่มปุ่ม “เปิด Google Sheet” ในเมนูส่งออก"] },
   { v: "1.4.0", d: "2026-11-14", items: ["แสดงเลขเวอร์ชันบนเว็บ พร้อมหน้าต่าง “มีอะไรใหม่”", "เผยแพร่บน GitHub Pages"] },
   { v: "1.3.0", d: "2026-11-14", items: ["เปลี่ยนธีมเป็นโทนสีน้ำเงิน", "มาสคอตแมว “น้องเหมียว” บนหัวเว็บ หน้าต่างเช็คอิน และการ์ดแสดงความยินดี", "รูปย่อชื่อผู้เรียนมีหูแมว"] },

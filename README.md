@@ -1,6 +1,6 @@
 # เช็คชื่อคลาส Clude AI
 
-🌐 **เว็บไซต์:** https://bestnmk24-cyber.github.io/CludeAI_Check_in/  ·  เวอร์ชันปัจจุบัน **v1.5.0** (ดู [CHANGELOG.md](CHANGELOG.md))
+🌐 **เว็บไซต์:** https://bestnmk24-cyber.github.io/CludeAI_Check_in/  ·  เวอร์ชันปัจจุบัน **v1.5.1** (ดู [CHANGELOG.md](CHANGELOG.md))
 
 📊 **Google Sheet ที่ใช้เก็บข้อมูล:** ชีตระบบเช็คชื่อ - คลาส Clude AI (ลิงก์อยู่ใน `config.js` → `SHEET_URL`) มีแท็บ Data · รายชื่อ · บันทึกเวลา
 
