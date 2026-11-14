@@ -12,6 +12,9 @@
  */
 
 const APP_VERSION = '1.5.0';                   // ให้ตรงกับเวอร์ชันของหน้าเว็บ
+// ID ของ Google Sheet ที่ใช้เก็บข้อมูล (ส่วนระหว่าง /d/ กับ /edit ในลิงก์ของชีต)
+// เว้นว่างได้ ถ้าสร้างสคริปต์จากเมนู ส่วนขยาย → Apps Script ของชีตนั้นโดยตรง
+const SHEET_ID = '19h2fRrspEQd4PwUpMaust5Z8337xhia9GJdpeWu90kA';
 const TZ = 'Asia/Bangkok';
 const SHEET_ROSTER = 'รายชื่อ';
 const SHEET_ATT = 'บันทึกเวลา';
@@ -77,7 +80,7 @@ function setup() {
 }
 
 function ensureSheets_(format) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = ss_();
   let r = ss.getSheetByName(SHEET_ROSTER);
   let a = ss.getSheetByName(SHEET_ATT);
   const created = !r || !a;
@@ -264,7 +267,7 @@ function findAtt_(date, id) {
 /* ======================= Helpers ======================= */
 
 function appendLog_(ms, name, note) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = ss_();
   let log = ss.getSheetByName(SHEET_LOG);
   if (!log) { log = ss.insertSheet(SHEET_LOG, 0); log.getRange(1, 1, 1, 3).setValues([['timestamp', 'name', 'note']]); styleHeader_(log, 3); }
   log.getRange(log.getLastRow() + 1, 1, 1, 3).setValues([[Utilities.formatDate(new Date(ms), TZ, 'dd/MM/yyyy HH:mm'), name, note]]);
@@ -278,6 +281,7 @@ function getSigFolder_() {
   props.setProperty('SIG_FOLDER_ID', folder.getId());
   return folder;
 }
+function ss_() { return SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActiveSpreadsheet(); }
 function out_(obj) { return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON); }
 function newId_() { return 'p' + Utilities.getUuid().replace(/-/g, '').slice(0, 10); }
 function validId_(id) { return typeof id === 'string' && /^[A-Za-z0-9_.\-:]{1,80}$/.test(id); }
