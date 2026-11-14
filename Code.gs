@@ -11,10 +11,11 @@
  *   5. คัดลอก URL ที่ลงท้ายด้วย /exec ไปใส่ใน config.js ของหน้าเว็บ
  */
 
-const APP_VERSION = '1.4.0';                   // ให้ตรงกับเวอร์ชันของหน้าเว็บ
+const APP_VERSION = '1.5.0';                   // ให้ตรงกับเวอร์ชันของหน้าเว็บ
 const TZ = 'Asia/Bangkok';
 const SHEET_ROSTER = 'รายชื่อ';
 const SHEET_ATT = 'บันทึกเวลา';
+const SHEET_LOG = 'Data';                       // บันทึกเหตุการณ์แบบง่าย (timestamp, name, note) ทุกครั้งที่มีคนเช็คอิน/เช็คเอาท์
 const SAVE_SIGNATURE_TO_DRIVE = true;           // เก็บรูปลายเซ็นเป็นไฟล์ PNG ใน Google Drive ด้วย
 const SIGNATURE_FOLDER_NAME = 'ลายเซ็น - เช็คชื่อคลาส Clude AI';
 const MAX_CELL_CHARS = 49000;                   // ขีดจำกัดตัวอักษรต่อช่องของ Google Sheets คือ 50,000
@@ -229,6 +230,12 @@ function saveRecord_(b) {
   ];
   if (found) sh.getRange(found.rowNum, 1, 1, A_HEAD.length).setValues([row]);
   else sh.getRange(sh.getLastRow() + 1, 1, 1, A_HEAD.length).setValues([row]);
+
+  // บันทึกลงชีต Data (timestamp, name, note)
+  const prevIn = prev ? Number(prev[A.inMs]) || 0 : 0;
+  const prevOut = prev ? Number(prev[A.outMs]) || 0 : 0;
+  if (inMs !== prevIn) appendLog_(inMs, person.name, 'เช็คอิน');
+  if (outMs && outMs !== prevOut) appendLog_(outMs, person.name, 'เช็คเอาท์ (' + fmtDur_(outMs - inMs) + ')');
   return { ok: true };
 }
 
@@ -255,6 +262,13 @@ function findAtt_(date, id) {
 }
 
 /* ======================= Helpers ======================= */
+
+function appendLog_(ms, name, note) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let log = ss.getSheetByName(SHEET_LOG);
+  if (!log) { log = ss.insertSheet(SHEET_LOG, 0); log.getRange(1, 1, 1, 3).setValues([['timestamp', 'name', 'note']]); styleHeader_(log, 3); }
+  log.getRange(log.getLastRow() + 1, 1, 1, 3).setValues([[Utilities.formatDate(new Date(ms), TZ, 'dd/MM/yyyy HH:mm'), name, note]]);
+}
 
 function getSigFolder_() {
   const props = PropertiesService.getScriptProperties();
