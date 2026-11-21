@@ -297,16 +297,66 @@ textarea.copy{width:100%;height:160px;font-family:ui-monospace,monospace;font-si
 .vitem li{margin:2px 0}
 .vmeta{font-size:13px;color:#5b6b85;margin-bottom:12px;display:flex;gap:6px 14px;flex-wrap:wrap}
 .foot .vlink{color:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+
+/* ---------- v2: ล็อกอิน / บัญชี / มาสาย ---------- */
+body.locked .wrap{display:none}
+.login{min-height:100vh;display:grid;place-items:center;padding:24px 14px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23ffffff' fill-opacity='.07'%3E%3Cellipse cx='30' cy='34' rx='9' ry='8'/%3E%3Ccircle cx='20' cy='22' r='4'/%3E%3Ccircle cx='28' cy='17' r='4'/%3E%3Ccircle cx='37' cy='18' r='4'/%3E%3Ccircle cx='43' cy='26' r='4'/%3E%3C/g%3E%3C/svg%3E"),linear-gradient(135deg,#1e3a8a 0%,#1d4ed8 45%,#2563eb 75%,#0ea5e9 100%)}
+.login-card{width:100%;max-width:420px;background:#fff;border-radius:28px;padding:26px 24px 22px;text-align:center;box-shadow:0 30px 60px -20px rgba(11,26,61,.55)}
+.login-cat{width:120px;height:140px;margin:-6px auto 4px}
+.login-cat svg{width:100%;height:100%;overflow:visible}
+.login-card h1{margin:0;font-size:26px;color:#172554}
+.login-sub{margin:4px 0 18px;color:#5b6b85;font-size:14.5px}
+.login-google{width:100%;min-height:50px;font-size:15.5px;border-radius:16px}
+.login-email{display:flex;gap:8px}
+.login-email input{flex:1;min-width:0;border:1px solid #e2e8f5;background:#eff6ff;border-radius:12px;padding:10px 12px;outline:none}
+.login-email input:focus{border-color:#3b82f6;background:#fff}
+.login-msg{display:none;margin-top:14px;padding:10px 12px;border-radius:12px;font-size:14px;text-align:left}
+.login-msg.show{display:block}
+.login-msg.err{background:#fee2e2;color:#991b1b}
+.login-msg.ok{background:#dbeafe;color:#1e3a8a}
+.login-note{margin:16px 0 0;color:#5b6b85;font-size:12.5px}
+.acct{display:inline-flex;align-items:center;gap:6px;padding:4px 4px 4px 4px;border-radius:999px;background:#ffffff26;border:1px solid #ffffff33;backdrop-filter:blur(6px);font-size:13px;max-width:100%}
+.acct-ini{width:26px;height:26px;border-radius:50%;background:#fff;color:#1d4ed8;display:grid;place-items:center;font-weight:700;font-family:Prompt,sans-serif;flex:none}
+.acct-email{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px;padding:0 2px}
+.acct-btn{height:28px;min-width:28px;border-radius:999px;display:inline-grid;place-items:center;padding:0 8px;color:#fff;background:#ffffff1f}
+.acct-btn:hover{background:#ffffff40}
+.acct-out{font-weight:600}
+.late{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:#fef3c7;color:#b45309;font-size:11.5px;font-weight:600;vertical-align:middle}
+.late-lbl{color:#b45309;font-weight:600}
+.hero-bar{max-width:calc(100% - 340px)}
+.bubble{top:64px;bottom:auto}
+.acct-btn,.datebox{white-space:nowrap}
+@media (max-width:980px){ .hero-bar{max-width:calc(100% - 250px)} }
+@media (max-width:760px){ .acct-email{max-width:84px} .acct-out{padding:0 7px} .hero-bar{max-width:calc(100% - 96px)} }
 </style>
 </head>
 <body>
+<div class="login" id="loginScreen" hidden>
+  <div class="login-card">
+    <div class="login-cat" data-cat="wave"></div>
+    <h1>คลาส Clude AI</h1>
+    <p class="login-sub">ระบบเช็คชื่อผู้เข้าเรียน · เข้าสู่ระบบเพื่อเริ่มเช็คชื่อ</p>
+    <button class="btn btn-primary login-google" id="googleBtn" type="button">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 7l9 6 9-6"/></svg>
+      เข้าสู่ระบบด้วย Google (Gmail)
+    </button>
+    <div class="or">หรือรับลิงก์ทางอีเมล</div>
+    <form class="login-email" id="emailForm">
+      <input type="email" id="loginEmail" placeholder="อีเมลของแอดมิน" autocomplete="email" required>
+      <button class="btn btn-ghost" id="emailBtn" type="submit">ส่งลิงก์</button>
+    </form>
+    <div class="login-msg" id="loginMsg" role="status"></div>
+    <p class="login-note">🔒 เฉพาะบัญชีแอดมินที่ได้รับอนุญาตเท่านั้น · <span data-ver>v</span></p>
+  </div>
+</div>
 <div class="wrap">
   <header class="hero">
     <div class="hero-top">
       <div class="brand">
         <div class="logo" aria-hidden="true" data-cat="face"></div>
         <div>
-          <h1>คลาส Clude AI<button class="ver" data-ver-open aria-label="ดูเวอร์ชันและสิ่งที่อัปเดต"><i></i><span data-ver>v1.5.1</span></button></h1>
+          <h1><span id="className">คลาส Clude AI</span><button class="ver" data-ver-open aria-label="ดูเวอร์ชันและสิ่งที่อัปเดต"><i></i><span data-ver>v2.0.0</span></button></h1>
           <p>ระบบเช็คชื่อผู้เข้าเรียนออนไลน์ · กับน้องเหมียว 🐾</p>
         </div>
       </div>
@@ -324,6 +374,11 @@ textarea.copy{width:100%;height:160px;font-family:ui-monospace,monospace;font-si
         <input type="date" id="datePick" aria-label="เลือกวันที่">
       </label>
       <button class="today-btn" id="todayBtn" hidden>กลับไปวันนี้</button>
+      <div class="acct" id="acct" hidden>
+        <span class="acct-ini" id="acctIni">?</span><span class="acct-email" id="acctEmail"></span>
+        <button class="acct-btn" id="settingsBtn" type="button" title="ตั้งค่าคลาส" aria-label="ตั้งค่าคลาส"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></button>
+        <button class="acct-btn acct-out" id="logoutBtn" type="button">ออกจากระบบ</button>
+      </div>
       <span class="pill off" id="syncPill"><span class="dot"></span><span id="syncText">กำลังเชื่อมต่อ…</span></span>
     </div>
   </header>
@@ -334,7 +389,7 @@ textarea.copy{width:100%;height:160px;font-family:ui-monospace,monospace;font-si
         <svg width="66" height="66" viewBox="0 0 66 66"><circle cx="33" cy="33" r="27" stroke="#dbeafe" stroke-width="8" fill="none"/><circle id="ringArc" cx="33" cy="33" r="27" stroke="url(#rg)" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="169.6" style="transition:stroke-dashoffset .5s"/><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#38bdf8"/></linearGradient></defs></svg>
         <span id="ringPct">0%</span>
       </div>
-      <div><div class="lbl">มาเรียนแล้ว</div><div class="num"><span id="stPresent">0</span> <small>/ <span id="stTotal">0</span> คน</small></div></div>
+      <div><div class="lbl">มาเรียนแล้ว <span class="late-lbl" id="stLate"></span></div><div class="num"><span id="stPresent">0</span> <small>/ <span id="stTotal">0</span> คน</small></div></div>
     </div>
     <div class="stat">
       <div class="ico" style="background:var(--g100);color:var(--g700)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 3h3a3 3 0 013 3v12a3 3 0 01-3 3h-3M10 17l5-5-5-5M15 12H3"/></svg></div>
@@ -368,7 +423,6 @@ textarea.copy{width:100%;height:160px;font-family:ui-monospace,monospace;font-si
         <div class="menu-wrap">
           <button class="btn btn-primary" id="exportBtn" aria-haspopup="true" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 15V3M7 8l5-5 5 5M4 21h16"/></svg>ส่งออก</button>
           <div class="menu" id="exportMenu" role="menu">
-            <button data-exp="opensheet" role="menuitem" hidden id="openSheetItem"><span style="font-size:20px">🟩</span><span>เปิด Google Sheet<small>ดูข้อมูลที่บันทึกแบบเรียลไทม์</small></span></button>
             <button data-exp="sheets" role="menuitem"><span style="font-size:20px">📋</span><span>คัดลอกไปวางใน Google Sheets<small>คัดลอกตาราง แล้วกด วาง ในชีต</small></span></button>
             <button data-exp="xlsx" role="menuitem"><span style="font-size:20px">📗</span><span>ดาวน์โหลด Excel (.xlsx)<small>รายงานการเข้าเรียนของวันที่เลือก</small></span></button>
             <button data-exp="csv" role="menuitem"><span style="font-size:20px">📄</span><span>ดาวน์โหลด CSV<small>เปิดได้ทั้ง Excel และ Google Sheets</small></span></button>
@@ -382,7 +436,7 @@ textarea.copy{width:100%;height:160px;font-family:ui-monospace,monospace;font-si
     </div>
     <div id="list"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
   </section>
-  <p class="foot">🐾 คลาส Clude AI · กดปุ่ม “เช็คอิน” แล้วเซ็นชื่อเพื่อบันทึกเวลาเข้าเรียน 🐾<br><a class="vlink" data-ver-open>เวอร์ชัน <span data-ver>v1.5.1</span> · มีอะไรใหม่</a></p>
+  <p class="foot">🐾 คลาส Clude AI · กดปุ่ม “เช็คอิน” แล้วเซ็นชื่อเพื่อบันทึกเวลาเข้าเรียน 🐾<br><a class="vlink" data-ver-open>เวอร์ชัน <span data-ver>v2.0.0</span> · มีอะไรใหม่</a></p>
 </div>
 
 <!-- Check-in modal -->
@@ -502,6 +556,25 @@ textarea.copy{width:100%;height:160px;font-family:ui-monospace,monospace;font-si
   </div>
 </div>
 
+<!-- Settings -->
+<div class="overlay" id="mSettings" role="dialog" aria-modal="true" aria-labelledby="stTitle">
+  <form class="modal" style="max-width:440px" id="settingsForm">
+    <div class="modal-h">
+      <div class="ttl"><span class="mcat" data-cat="face"></span><div><h2 id="stTitle">ตั้งค่าคลาส</h2><p>ใช้คำนวณสถานะ “มาสาย” ให้อัตโนมัติ</p></div></div>
+      <button type="button" class="x" data-close aria-label="ปิด"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="modal-b">
+      <label class="field"><span>ชื่อคลาส</span><input id="sName" maxlength="60" placeholder="Clude AI"></label>
+      <label class="field"><span>เวลาเริ่มเรียน</span><input id="sStart" type="time" required></label>
+      <label class="field"><span>นับว่ามาสาย เมื่อเช็คอินหลังเวลาเริ่มเกิน (นาที)</span><input id="sLate" type="number" min="0" max="600" required></label>
+    </div>
+    <div class="modal-f">
+      <button type="button" class="btn btn-ghost" data-close>ยกเลิก</button>
+      <button type="submit" class="btn btn-primary" id="sSave">บันทึก</button>
+    </div>
+  </form>
+</div>
+
 <!-- Confirm -->
 <div class="overlay" id="mConfirm" role="dialog" aria-modal="true" aria-labelledby="cfTitle">
   <div class="modal" style="max-width:420px">
@@ -527,6 +600,7 @@ textarea.copy{width:100%;height:160px;font-family:ui-monospace,monospace;font-si
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <div class="celebrate" id="celebrate" aria-live="polite"><div class="card"><div data-cat="wave"></div><h3 id="celTitle"></h3><p id="celSub"></p></div></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script>
 "use strict";
@@ -586,8 +660,9 @@ function celebrate(title, sub){
 
 
 /* ================= เวอร์ชัน ================= */
-const APP_VERSION = "1.5.1";
+const APP_VERSION = "2.0.0";
 const CHANGELOG = [
+  { v: "2.0.0", d: "2026-11-21", items: ["หน้าเข้าสู่ระบบใหม่ — ล็อกอินด้วย Google (Gmail) ผ่าน Supabase Auth เฉพาะบัญชีแอดมิน", "ย้ายฐานข้อมูลทั้งหมดไป Supabase พร้อมสิทธิ์แบบ Row Level Security", "ทุกเครื่องเห็นการเช็คชื่อทันทีแบบเรียลไทม์", "ตั้งเวลาเริ่มคลาสได้ และแสดงสถานะ “มาสาย” อัตโนมัติ (ติดไปในไฟล์ที่ส่งออกด้วย)", "เมนูบัญชีผู้ใช้ และปุ่มออกจากระบบ"] },
   { v: "1.5.1", d: "2026-11-14", items: ["ย้ายไปบันทึกลง Google Sheet ตัวใหม่ของคลาส (แท็บ Data · รายชื่อ · บันทึกเวลา)"] },
   { v: "1.5.0", d: "2026-11-14", items: ["เชื่อมต่อ Google Sheet ของคลาสแล้ว — เช็คอิน/เช็คเอาท์บันทึกลงชีตทันที", "บันทึกเหตุการณ์ลงแท็บ Data (timestamp, name, note) ทุกครั้งที่มีคนเช็คชื่อ", "เพิ่มปุ่ม “เปิด Google Sheet” ในเมนูส่งออก"] },
   { v: "1.4.0", d: "2026-11-14", items: ["แสดงเลขเวอร์ชันบนเว็บ พร้อมหน้าต่าง “มีอะไรใหม่”", "เผยแพร่บน GitHub Pages"] },
@@ -598,8 +673,8 @@ const CHANGELOG = [
 ];
 function fmtVerDate(d){ const [y,m,dd] = d.split("-").map(Number); return new Date(y, m-1, dd).toLocaleDateString("th-TH", {day:"numeric", month:"short", year:"numeric"}); }
 function openVersion(){
-  const srv = (typeof Sheets !== "undefined" && Sheets.serverVersion) ? Sheets.serverVersion : "";
-  $("#vMeta").innerHTML = `<span>หน้าเว็บ: <b>v${esc(APP_VERSION)}</b></span>` +
+  const srv = "";
+  $("#vMeta").innerHTML = `<span>หน้าเว็บ: <b>v${esc(APP_VERSION)}</b></span>` + (state.mode === "cloud" ? `<span>ฐานข้อมูล: <b>Supabase</b></span>` : "") + (currentUser ? `<span>ผู้ใช้: <b>${esc(currentUser.email || "")}</b></span>` : "") +
     (srv ? `<span>สคริปต์ Google Sheet: <b>v${esc(srv)}</b>${srv !== APP_VERSION ? ' <span style="color:#b45309">(ควรอัปเดตสคริปต์ให้ตรงกับหน้าเว็บ)</span>' : ""}</span>` : "");
   $("#vList").innerHTML = CHANGELOG.map(c => `<div class="vitem ${c.v===APP_VERSION?"cur":""}"><h4>v${esc(c.v)} ${c.v===APP_VERSION?'<span class="now">เวอร์ชันปัจจุบัน</span>':""}<small>${esc(fmtVerDate(c.d))}</small></h4><ul>${c.items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div>`).join("");
   openM("#mVersion");
@@ -628,9 +703,10 @@ const Local = {
   async bulk(list, replace, onProg){ if (replace) this.data.roster = {}; for (const [id,p] of list) this.data.roster[id] = p; this.save(); this.emitR(); onProg && onProg(list.length); }
 };
 
-/* ================= Google Sheets store (ผ่าน Google Apps Script) ================= */
-const CONFIG = Object.assign({ SCRIPT_URL: "", SHEET_URL: "", POLL_SECONDS: 15 }, window.APP_CONFIG || {});
-const Q_KEY = "clude-ai-queue-v1", SIG_KEY = "clude-ai-sigs-v1";
+/* ================= Supabase store (ฐานข้อมูล + ล็อกอิน) ================= */
+const CONFIG = Object.assign({ SUPABASE_URL: "", SUPABASE_KEY: "", POLL_SECONDS: 30 }, window.APP_CONFIG || {});
+const Q_KEY = "clude-ai-queue-v2", SIG_KEY = "clude-ai-sigs-v2";
+let sb = null;
 function applyOp(op, roster, records, date){
   switch (op.action) {
     case "upsertPerson": roster.set(op.person.id, op.person); break;
@@ -646,28 +722,51 @@ function applyOp(op, roster, records, date){
     case "clearRecord": if (op.date === date) records.delete(op.id); break;
   }
 }
-const Sheets = {
-  url: "", srvRoster: new Map(), srvRecords: new Map(), srvDate: null, loadedOnce: false,
+const isNetErr = e => !!e && (/Failed to fetch|NetworkError|Load failed|network|fetch/i.test(String(e.message || e)) || e.name === "TypeError" || e.status === 0);
+const isAuthErr = e => !!e && (e.code === "PGRST301" || e.code === "PGRST303" || /JWT|jwt|token/i.test(String(e.message || "")));
+const toPerson = s => ({ id: s.id, name: s.name, code: s.code || "", group: s.company || "", position: s.position || "", order: s.sort_order ?? null });
+const toRow = p => ({ id: p.id, name: String(p.name || "").trim(), code: p.code || "", company: p.group || "", position: p.position || "", sort_order: Number(p.order) || null });
+const iso = ms => ms ? new Date(ms).toISOString() : null;
+const Cloud = {
+  srvRoster: new Map(), srvRecords: new Map(), srvDate: null, loadedOnce: false,
   cbR: null, cbRec: null, onErr: null, queue: [], flushing: false, refreshing: false, again: false,
-  sigs: new Map(), noSig: new Set(), sigLoading: new Set(), online: true, writeSeq: 0,
-  init(url){
-    this.url = url;
+  sigs: new Map(), noSig: new Set(), sigLoading: new Set(), online: true, writeSeq: 0, ch: null, rt: "", chDate: null, soonT: null,
+  init(){
     try { this.queue = JSON.parse(localStorage.getItem(Q_KEY) || "[]"); } catch(e){ this.queue = []; }
     try { const s = JSON.parse(localStorage.getItem(SIG_KEY) || "{}"); for (const k in s) this.sigs.set(k, s[k]); } catch(e){}
     document.addEventListener("visibilitychange", () => { if (!document.hidden) this.refresh(); });
     window.addEventListener("online", () => this.refresh());
-    setInterval(() => { if (!document.hidden) this.refresh(); }, Math.max(5, Number(CONFIG.POLL_SECONDS) || 15) * 1000);
+    setInterval(() => { if (!document.hidden) this.refresh(); }, Math.max(10, Number(CONFIG.POLL_SECONDS) || 30) * 1000);
   },
   saveQ(){ try { localStorage.setItem(Q_KEY, JSON.stringify(this.queue)); } catch(e){} },
   saveSigs(){ try { const o = {}, t = todayKey(); for (const [k,v] of this.sigs) if (k.startsWith(t)) o[k] = v; localStorage.setItem(SIG_KEY, JSON.stringify(o)); } catch(e){} },
   sigKey(date, id, ci){ return `${date}|${id}|${ci}`; },
-  async api(params, body){
-    const u = body ? this.url : this.url + (this.url.includes("?") ? "&" : "?") + new URLSearchParams(params);
-    const opt = body ? { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) } : {};
-    let r; try { r = await fetch(u, opt); } catch(e){ const err = new Error("network"); err.network = true; throw err; }
-    let j; try { j = await r.json(); } catch(e){ const err = new Error("ได้รับข้อมูลที่อ่านไม่ได้ (HTTP " + r.status + ")"); err.network = true; throw err; }
-    if (!j || !j.ok) throw new Error((j && j.error) || "server_error");
-    return j;
+  async q(req){
+    let res; try { res = await req; } catch(e){ const err = new Error("network"); err.network = true; throw err; }
+    if (res.error) { const err = new Error(res.error.message || "db_error"); err.code = res.error.code; err.network = isNetErr(res.error) || isAuthErr(res.error); throw err; }
+    return res.data;
+  },
+  async exec(op){
+    switch (op.action) {
+      case "upsertPerson": return this.q(sb.from("students").upsert(toRow(op.person)));
+      case "deletePerson": return this.q(sb.from("students").delete().eq("id", op.id));
+      case "bulkRoster": {
+        if (op.replace) {
+          const ids = op.people.map(p => `"${String(p.id).replace(/"/g, "")}"`).join(",");
+          await this.q(ids ? sb.from("students").delete().not("id", "in", `(${ids})`) : sb.from("students").delete().neq("id", ""));
+        }
+        for (let i = 0; i < op.people.length; i += 200) await this.q(sb.from("students").upsert(op.people.slice(i, i + 200).map(toRow)));
+        return;
+      }
+      case "saveRecord": {
+        if (!op.checkIn) return this.q(sb.from("attendance").delete().eq("class_date", op.date).eq("student_id", op.id));
+        const p = state.roster.get(op.id);
+        const row = { class_date: op.date, student_id: op.id, student_name: p ? p.name : "", check_in: iso(op.checkIn), check_out: iso(op.checkOut) };
+        if (op.signature) row.signature = op.signature;
+        return this.q(sb.from("attendance").upsert(row, { onConflict: "class_date,student_id" }));
+      }
+      case "clearRecord": return this.q(sb.from("attendance").delete().eq("class_date", op.date).eq("student_id", op.id));
+    }
   },
   view(){
     const roster = new Map(this.srvRoster), records = new Map(this.srvRecords);
@@ -676,25 +775,41 @@ const Sheets = {
     return { roster, records };
   },
   emit(){ const v = this.view(); if (this.cbR && this.loadedOnce) this.cbR(v.roster, { fromCache: false }); if (this.cbRec && this.srvDate === state.date) this.cbRec(v.records, { fromCache: false }); },
+  soon(){ clearTimeout(this.soonT); this.soonT = setTimeout(() => this.refresh(), 300); },
+  realtime(){
+    if (this.chDate === state.date && this.ch) return;
+    if (this.ch) { try { sb.removeChannel(this.ch); } catch(e){} }
+    this.chDate = state.date;
+    this.ch = sb.channel("attendance-" + state.date)
+      .on("postgres_changes", { event: "*", schema: "public", table: "attendance", filter: "class_date=eq." + state.date }, () => this.soon())
+      .on("postgres_changes", { event: "*", schema: "public", table: "students" }, () => this.soon())
+      .on("postgres_changes", { event: "*", schema: "public", table: "class_settings" }, () => this.soon())
+      .subscribe(status => { this.rt = status; setSyncCloud(); });
+  },
   async refresh(){
     if (this.refreshing) { this.again = true; return; }
     this.refreshing = true;
     try {
       if (this.queue.length) await this.flush();
       const d = state.date, seq = this.writeSeq;
-      const j = await this.api({ action: "getAll", date: d });
+      const [students, att, settings] = await Promise.all([
+        this.q(sb.from("students").select("id,name,code,company,position,sort_order").order("sort_order", { ascending: true, nullsFirst: false }).order("name")),
+        this.q(sb.from("attendance").select("student_id,check_in,check_out,has_signature").eq("class_date", d)),
+        this.q(sb.from("class_settings").select("class_name,class_start,late_after_minutes").eq("id", 1).maybeSingle())
+      ]);
       this.online = true;
+      if (settings) applySettings(settings);
       if (d === state.date && seq === this.writeSeq) {
-        this.srvDate = d; this.loadedOnce = true; this.serverVersion = j.version || this.serverVersion || "";
-        this.srvRoster = new Map(j.roster.map(p => [p.id, p]));
-        this.srvRecords = new Map(Object.entries(j.records || {}));
+        this.srvDate = d; this.loadedOnce = true;
+        this.srvRoster = new Map(students.map(s => [s.id, toPerson(s)]));
+        this.srvRecords = new Map(att.map(a => [a.student_id, { checkIn: Date.parse(a.check_in), checkOut: a.check_out ? Date.parse(a.check_out) : null, hasSig: a.has_signature }]));
         this.emit(); this.loadSigs(d);
       } else this.again = true;
     } catch(e){
       this.online = false;
       if (!this.loadedOnce && this.onErr) this.onErr(e);
     } finally {
-      this.refreshing = false; setSyncSheets();
+      this.refreshing = false; setSyncCloud();
       if (this.again) { this.again = false; setTimeout(() => this.refresh(), 300); }
     }
   },
@@ -705,8 +820,10 @@ const Sheets = {
       const k = this.sigKey(d, id, r.checkIn);
       if (this.sigs.has(k) || this.noSig.has(k) || this.sigLoading.has(k)) continue;
       this.sigLoading.add(k);
-      try { const j = await this.api({ action: "getSig", date: d, id }); if (j.signature) { this.sigs.set(k, j.signature); this.saveSigs(); this.emit(); } else this.noSig.add(k); }
-      catch(e){} finally { this.sigLoading.delete(k); }
+      try {
+        const row = await this.q(sb.from("attendance").select("signature").eq("class_date", d).eq("student_id", id).maybeSingle());
+        if (row && row.signature) { this.sigs.set(k, row.signature); this.saveSigs(); this.emit(); } else this.noSig.add(k);
+      } catch(e){} finally { this.sigLoading.delete(k); }
     }
   },
   async flush(){
@@ -714,17 +831,21 @@ const Sheets = {
     try {
       while (this.queue.length) {
         const op = this.queue[0];
-        try { await this.api(null, op); this.writeSeq++; this.queue.shift(); this.saveQ(); applyOp(op, this.srvRoster, this.srvRecords, this.srvDate); this.online = true; }
-        catch(e){ if (e.network) { this.online = false; break; } this.writeSeq++; this.queue.shift(); this.saveQ(); toast("Google Sheet ไม่รับข้อมูล: " + e.message, "err"); }
+        try { await this.exec(op); this.writeSeq++; this.queue.shift(); this.saveQ(); applyOp(op, this.srvRoster, this.srvRecords, this.srvDate); this.online = true; }
+        catch(e){
+          if (e.network) { this.online = false; break; }
+          this.writeSeq++; this.queue.shift(); this.saveQ();
+          toast(e.code === "42501" ? "บัญชีนี้ไม่มีสิทธิ์บันทึกข้อมูล" : "บันทึกไม่สำเร็จ: " + e.message, "err");
+        }
       }
-    } finally { this.flushing = false; setSyncSheets(); this.emit(); }
+    } finally { this.flushing = false; setSyncCloud(); this.emit(); }
   },
   push(op){
-    op.opId = newId(); this.queue.push(op); this.saveQ(); this.writeSeq++; this.emit(); setSyncSheets();
+    op.opId = newId(); this.queue.push(op); this.saveQ(); this.writeSeq++; this.emit(); setSyncCloud();
     this.flush().then(() => { if (!this.queue.length) this.refresh(); });
   },
-  watchRoster(cb, onErr){ this.cbR = cb; this.onErr = onErr; this.refresh(); return () => { this.cbR = null; }; },
-  watchRecords(date, cb){ this.cbRec = cb; if (this.srvDate !== date) { this.srvRecords = new Map(); this.srvDate = date; } this.refresh(); return () => {}; },
+  watchRoster(cb, onErr){ this.cbR = cb; this.onErr = onErr; this.realtime(); this.refresh(); return () => { this.cbR = null; }; },
+  watchRecords(date, cb){ this.cbRec = cb; if (this.srvDate !== date) { this.srvRecords = new Map(); this.srvDate = date; } this.realtime(); this.refresh(); return () => {}; },
   async putPerson(id, p){ this.push({ action: "upsertPerson", person: { id, ...p } }); },
   async removePerson(id){ this.push({ action: "deletePerson", id }); },
   async putRecord(date, id, r){
@@ -736,22 +857,100 @@ const Sheets = {
   async removeRecord(date, id){ this.push({ action: "clearRecord", date, id }); },
   async bulk(list, replace, onProg){ this.push({ action: "bulkRoster", replace, people: list.map(([id, p]) => ({ id, ...p })) }); onProg && onProg(list.length); }
 };
-function setSyncSheets(){
-  if (state.mode !== "sheets") return;
-  const n = Sheets.queue.length;
-  if (!Sheets.online) setSync("warn", n ? `ออฟไลน์ · รอส่ง ${n} รายการ` : "เชื่อมต่อ Google Sheet ไม่ได้");
-  else if (n) setSync("warn", `กำลังบันทึกลง Google Sheet… (${n})`);
-  else setSync("ok", "เชื่อม Google Sheet แล้ว");
+function setSyncCloud(){
+  if (state.mode !== "cloud") return;
+  const n = Cloud.queue.length;
+  if (!Cloud.online) setSync("warn", n ? `ออฟไลน์ · รอส่ง ${n} รายการ` : "เชื่อมต่อฐานข้อมูลไม่ได้");
+  else if (n) setSync("warn", `กำลังบันทึก… (${n})`);
+  else setSync("ok", Cloud.rt === "SUBSCRIBED" ? "ออนไลน์ · ซิงค์ทุกเครื่องทันที" : "ออนไลน์ · บันทึกแล้ว");
 }
 function writeErr(e){ toast("บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง", "err"); }
 function onDbError(e){ clearTimeout(loadTimer); state.loaded = true; state.stale = true; render(); }
 
+/* ================= ตั้งค่าคลาส + มาสาย ================= */
+state.settings = { class_name: "Clude AI", class_start: "09:00", late_after_minutes: 15 };
+function applySettings(s){
+  const prev = JSON.stringify(state.settings);
+  state.settings = { class_name: s.class_name || "Clude AI", class_start: String(s.class_start || "09:00").slice(0, 5), late_after_minutes: Number(s.late_after_minutes) || 0 };
+  const el = document.getElementById("className"); if (el) el.textContent = "คลาส " + state.settings.class_name;
+  if (prev !== JSON.stringify(state.settings)) render();
+}
+function lateLimit(dateStr){ const [h, m] = state.settings.class_start.split(":").map(Number); const [y, mo, d] = dateStr.split("-").map(Number); return new Date(y, mo - 1, d, h || 0, m || 0).getTime() + state.settings.late_after_minutes * 60000; }
+function isLate(r){ return !!(r && r.checkIn) && state.mode === "cloud" && r.checkIn > lateLimit(state.date); }
+
+/* ================= ล็อกอิน (Supabase Auth + Google) ================= */
+let authStarted = false, currentUser = null;
+function showLogin(msg, kind){
+  document.body.classList.add("locked"); $("#loginScreen").hidden = false; $("#acct").hidden = true;
+  const m = $("#loginMsg"); m.textContent = msg || ""; m.className = "login-msg" + (msg ? " show " + (kind || "err") : "");
+}
+function hideLogin(){ document.body.classList.remove("locked"); $("#loginScreen").hidden = true; }
+const redirectURL = () => location.origin + location.pathname;
+async function loginGoogle(){
+  const b = $("#googleBtn"); b.disabled = true;
+  const { error } = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: redirectURL(), queryParams: { prompt: "select_account" } } });
+  if (error) { b.disabled = false; showLogin("เข้าสู่ระบบด้วย Google ไม่สำเร็จ: " + error.message); }
+}
+async function loginEmail(e){
+  e.preventDefault();
+  const email = norm($("#loginEmail").value).toLowerCase(); if (!email) return;
+  const b = $("#emailBtn"); b.disabled = true;
+  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectURL() } });
+  b.disabled = false;
+  if (error) showLogin(/Database error|not allowed|Signups not allowed/i.test(error.message) ? "อีเมลนี้ไม่ได้รับอนุญาตให้ใช้งานระบบเช็คชื่อ" : "ส่งลิงก์ไม่สำเร็จ: " + error.message);
+  else showLogin("ส่งลิงก์เข้าสู่ระบบไปที่ " + email + " แล้ว — เปิดอีเมลแล้วกดลิงก์บนเครื่องนี้", "ok");
+}
+async function logout(){
+  if (Cloud.queue.length && !confirmLeave()) return;
+  await sb.auth.signOut(); location.replace(redirectURL());
+}
+function confirmLeave(){ toast(`ยังมีข้อมูลรอส่ง ${Cloud.queue.length} รายการ — รอให้บันทึกเสร็จก่อนออกจากระบบ`, "err"); return false; }
+function showAcct(user){
+  const email = user.email || "";
+  $("#acctEmail").textContent = email;
+  $("#acctIni").textContent = (email[0] || "?").toUpperCase();
+  $("#acct").hidden = false;
+}
+async function handleSession(session){
+  if (!session) { currentUser = null; showLogin($("#loginMsg").textContent, $("#loginMsg").classList.contains("ok") ? "ok" : "err"); return; }
+  if (currentUser && currentUser.id === session.user.id) return;
+  currentUser = session.user;
+  let allowed = true;
+  try { const rows = await Cloud.q(sb.from("admins").select("email").limit(1)); allowed = rows.length > 0; }
+  catch(e){ allowed = !!e.network; }
+  if (!allowed) {
+    const em = session.user.email; currentUser = null;
+    await sb.auth.signOut();
+    showLogin(`บัญชี ${em} ไม่ได้รับอนุญาตให้ใช้งานระบบเช็คชื่อ`);
+    return;
+  }
+  hideLogin(); showAcct(session.user);
+  if (!authStarted) {
+    authStarted = true; Cloud.init(); Store = Cloud; state.mode = "cloud";
+    setSync("off", "กำลังเชื่อมต่อฐานข้อมูล…");
+    subscribeRoster(); subscribeRecords();
+  }
+}
+
+/* ================= ตั้งค่าคลาส (modal) ================= */
+function openSettings(){
+  $("#sName").value = state.settings.class_name; $("#sStart").value = state.settings.class_start; $("#sLate").value = state.settings.late_after_minutes;
+  openM("#mSettings");
+}
+async function saveSettings(e){
+  e.preventDefault();
+  const row = { class_name: norm($("#sName").value) || "Clude AI", class_start: $("#sStart").value || "09:00", late_after_minutes: Math.max(0, Math.min(600, parseInt($("#sLate").value, 10) || 0)) };
+  const b = $("#sSave"); b.disabled = true;
+  try { await Cloud.q(sb.from("class_settings").update(row).eq("id", 1)); applySettings(row); closeM("#mSettings"); toast("บันทึกการตั้งค่าแล้ว"); }
+  catch(err){ toast(err.network ? "ออฟไลน์อยู่ ลองใหม่เมื่อเชื่อมต่อได้" : "บันทึกการตั้งค่าไม่สำเร็จ: " + err.message, "err"); }
+  b.disabled = false;
+}
+
 /* ================= Sync pill ================= */
 function setSync(kind, text){ const p = $("#syncPill"); p.className = "pill" + (kind === "ok" ? "" : " " + kind); $("#syncText").textContent = text; }
 function syncIdle(){
-  if (state.mode === "cloud") setSync(state.stale ? "warn" : "ok", state.stale ? "ยังเชื่อมต่อไม่ได้ ข้อมูลอาจไม่อัปเดต" : (state.readOnly ? "ออนไลน์ · ดูได้อย่างเดียว" : "ออนไลน์ · ซิงค์อัตโนมัติ"));
+  if (state.mode === "cloud") setSyncCloud();
   else if (state.mode === "local") setSync("off", "บันทึกในอุปกรณ์นี้");
-  else if (state.mode === "sheets") setSyncSheets();
 }
 
 /* ================= Subscriptions ================= */
@@ -784,6 +983,8 @@ function render(){
   let cIn=0, cOut=0;
   for (const [id] of all) { const s = statusOf(id); if (s==="in") cIn++; else if (s==="out") cOut++; }
   const total = all.length, present = cIn + cOut, absent = total - present;
+  const cLate = all.filter(([id]) => isLate(state.records.get(id))).length;
+  $("#stLate").textContent = cLate ? `· สาย ${cLate}` : "";
   $("#stTotal").textContent = total; $("#stPresent").textContent = present; $("#stIn").textContent = cIn; $("#stOut").textContent = cOut; $("#stAbsent").textContent = absent;
   $("#cAll").textContent = total; $("#cAbsent").textContent = absent; $("#cIn").textContent = cIn; $("#cOut").textContent = cOut;
   const pct = total ? Math.round(present/total*100) : 0;
@@ -791,7 +992,7 @@ function render(){
 
   $("#todayBtn").hidden = isToday();
   const banners = [];
-  if (state.mode === "local") banners.push(`<div class="banner info">💡 ยังไม่ได้เชื่อม Google Sheet — ข้อมูลบันทึกไว้ในเบราว์เซอร์ของเครื่องนี้เท่านั้น (ตั้งค่า SCRIPT_URL ในไฟล์ config.js เพื่อบันทึกลง Google Sheet)</div>`);
+  if (state.mode === "local") banners.push(`<div class="banner info">💡 ยังไม่ได้เชื่อมฐานข้อมูล Supabase — ข้อมูลบันทึกไว้ในเบราว์เซอร์ของเครื่องนี้เท่านั้น (ตั้งค่า SUPABASE_URL / SUPABASE_KEY ในไฟล์ config.js)</div>`);
   if (state.readOnly) banners.push(`<div class="banner warn">👀 บัญชีนี้ดูข้อมูลได้อย่างเดียว ไม่สามารถเช็คชื่อหรือแก้ไขรายชื่อได้</div>`);
   if (!isToday()) banners.push(`<div class="banner warn">📅 กำลังดูข้อมูลย้อนหลังของ${esc(fmtDateLong(state.date))} — เช็คชื่อได้เฉพาะวันนี้</div>`);
   $("#banners").innerHTML = banners.join("");
@@ -799,9 +1000,9 @@ function render(){
 
   const list = $("#list");
   if (!state.loaded) { $("#thead").hidden = true; list.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>'; return; }
-  if (!total && state.mode === "sheets" && !Sheets.loadedOnce) {
+  if (!total && state.mode === "cloud" && !Cloud.loadedOnce) {
     $("#thead").hidden = true;
-    list.innerHTML = `<div class="empty-state"><h3>เชื่อมต่อ Google Sheet ไม่ได้</h3><p>ตรวจสอบอินเทอร์เน็ต และ SCRIPT_URL ใน config.js ว่าเป็น URL ของเว็บแอปที่ลงท้ายด้วย /exec — ระบบจะลองเชื่อมต่อใหม่อัตโนมัติ</p></div>`;
+    list.innerHTML = `<div class="empty-state"><h3>เชื่อมต่อฐานข้อมูลไม่ได้</h3><p>ตรวจสอบอินเทอร์เน็ต — ระบบจะลองเชื่อมต่อใหม่อัตโนมัติ</p></div>`;
     return;
   }
   if (!total) {
@@ -829,7 +1030,7 @@ function render(){
     return `<div class="row ${s==="in"?"status-in":s==="out"?"status-out":""}">
       <div class="no">${idx}</div>
       <div class="who"><div class="avatar" style="background:${av.bg};color:${av.fg}">${esc(av.ini)}</div><div style="min-width:0"><div class="nm">${esc(p.name)}</div><div class="sub">${p.code?`<span>${esc(p.code)}</span>`:""}${p.group?`<span class="tag">${esc(p.group)}</span>`:""}${p.position?`<span>${esc(p.position)}</span>`:""}${!p.code&&!p.group&&!p.position?"<span>&nbsp;</span>":""}</div></div></div>
-      <div class="time t-in ${r.checkIn?"":"empty"}"><span class="k">เวลาเข้า</span>${r.checkIn?esc(fmtTime(r.checkIn)):"--:--"}</div>
+      <div class="time t-in ${r.checkIn?"":"empty"}"><span class="k">เวลาเข้า</span>${r.checkIn?esc(fmtTime(r.checkIn)):"--:--"}${isLate(r)?'<span class="late">สาย</span>':""}</div>
       <div class="time t-out ${r.checkOut?"":"empty"}"><span class="k">เวลาออก</span>${r.checkOut?esc(fmtTime(r.checkOut)):"--:--"}</div>
       <div class="sigc">${sig}</div>
       <div class="act">${act}<button class="more" data-act="detail" data-id="${id}" aria-label="รายละเอียดของ ${esc(p.name)}"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button></div>
@@ -1073,7 +1274,7 @@ $("#impConfirm").addEventListener("click", async () => {
 function reportRows(){
   const head = ["ลำดับ","รหัส","ชื่อ-นามสกุล","บริษัท/หน่วยงาน","ตำแหน่ง","วันที่","เวลาเข้า","เวลาออก","รวมเวลา","สถานะ","ลายเซ็น"];
   const st = {absent:"ยังไม่มา", in:"กำลังเรียน", out:"เช็คเอาท์แล้ว"};
-  const body = sortedRoster().map(([id,p], i) => { const r = state.records.get(id) || {}; return [i+1, p.code||"", p.name, p.group||"", p.position||"", state.date, fmtTime(r.checkIn), fmtTime(r.checkOut), r.checkIn && r.checkOut ? fmtDur(r.checkOut-r.checkIn) : "", st[statusOf(id)], r.signature ? "เซ็นแล้ว" : ""]; });
+  const body = sortedRoster().map(([id,p], i) => { const r = state.records.get(id) || {}; return [i+1, p.code||"", p.name, p.group||"", p.position||"", state.date, fmtTime(r.checkIn), fmtTime(r.checkOut), r.checkIn && r.checkOut ? fmtDur(r.checkOut-r.checkIn) : "", st[statusOf(id)] + (isLate(r) ? " (สาย)" : ""), r.signature ? "เซ็นแล้ว" : ""]; });
   return [head, ...body];
 }
 async function saveFile(filename, data){
@@ -1082,9 +1283,8 @@ async function saveFile(filename, data){
   toast("หน้านี้ดาวน์โหลดไฟล์ไม่ได้ ลองใช้ “คัดลอกไปวางใน Google Sheets”", "err");
 }
 async function doExport(kind){
-  if (kind !== "opensheet" && !state.roster.size) { toast("ยังไม่มีรายชื่อให้ส่งออก", "err"); return; }
+  if (!state.roster.size) { toast("ยังไม่มีรายชื่อให้ส่งออก", "err"); return; }
   const rows = reportRows(); const fname = `ClaudeAI-attendance-${state.date}`;
-  if (kind === "opensheet") { window.open(CONFIG.SHEET_URL, "_blank", "noopener"); return; }
   if (kind === "sheets") {
     const tsv = rows.map(r => r.map(c => String(c).replace(/[\t\n]/g, " ")).join("\t")).join("\n");
     try { await navigator.clipboard.writeText(tsv); toast("คัดลอกแล้ว — เปิด Google Sheets แล้วกด วาง (Ctrl/⌘ + V)"); }
@@ -1126,13 +1326,22 @@ tickClock(); setInterval(tickClock, 1000);
 render();
 
 /* ================= Boot ================= */
+$("#googleBtn").addEventListener("click", loginGoogle);
+$("#emailForm").addEventListener("submit", loginEmail);
+$("#logoutBtn").addEventListener("click", logout);
+$("#settingsBtn").addEventListener("click", openSettings);
+$("#settingsForm").addEventListener("submit", saveSettings);
 function boot(){
-  if (CONFIG.SHEET_URL) $("#openSheetItem").hidden = false;
-  if (CONFIG.SCRIPT_URL && /^https?:\/\//.test(CONFIG.SCRIPT_URL)) {
-    Sheets.init(CONFIG.SCRIPT_URL); Store = Sheets; state.mode = "sheets";
-    setSync("off", "กำลังเชื่อมต่อ Google Sheet…");
-  } else { Local.load(); Store = Local; state.mode = "local"; syncIdle(); }
-  subscribeRoster(); subscribeRecords();
+  const ok = CONFIG.SUPABASE_URL && CONFIG.SUPABASE_KEY && window.supabase && /^https:\/\//.test(CONFIG.SUPABASE_URL);
+  if (!ok) { Local.load(); Store = Local; state.mode = "local"; syncIdle(); subscribeRoster(); subscribeRecords(); return; }
+  sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: "pkce" } });
+  const params = new URLSearchParams(location.search + "&" + location.hash.replace(/^#/, ""));
+  const err = params.get("error_description") || params.get("error");
+  if (err) {
+    showLogin(/Database error|email_not_allowed|saving new user/i.test(err) ? "บัญชีนี้ไม่ได้รับอนุญาตให้ใช้งานระบบเช็คชื่อ (ใช้ได้เฉพาะบัญชีแอดมิน)" : "เข้าสู่ระบบไม่สำเร็จ: " + err);
+    history.replaceState(null, "", location.pathname);
+  } else document.body.classList.add("locked");
+  sb.auth.onAuthStateChange((event, session) => { setTimeout(() => handleSession(session), 0); });
 }
 boot();
 </script>
