@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Clude AI · สต็อกเรียลไทม์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{
+  --g900:#064e3b;--g700:#047857;--g600:#059669;--g500:#10b981;--g300:#6ee7b7;--g100:#d1fae5;--g50:#ecfdf5;
+  --ink:#0f2a22;--muted:#5b7a70;--line:#e3efe9;--bg:#f6fbf8;--white:#fff;
+  --warn:#d97706;--warnbg:#fef3c7;--bad:#dc2626;--badbg:#fee2e2;
+  --r:18px;--shadow:0 10px 30px -12px rgba(6,78,59,.18);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'Sarabun',system-ui,sans-serif;color:var(--ink);background:
+  radial-gradient(900px 400px at 100% -10%,#d1fae5 0,transparent 60%),
+  radial-gradient(700px 360px at -10% 0,#e0f7ec 0,transparent 55%),var(--bg);min-height:100vh}
+h1,h2,h3,.brand,.btn,.tab,.stat b{font-family:'Prompt',sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:18px 18px 110px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:22px;color:var(--g900)}
+.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--g500),var(--g700));display:grid;place-items:center;box-shadow:var(--shadow)}
+.logo svg{width:24px;height:24px}
+.brand small{display:block;font:500 12px 'Sarabun';color:var(--muted)}
+.live{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--g700);background:var(--white);border:1px solid var(--line);padding:7px 12px;border-radius:999px}
+.dot{width:9px;height:9px;border-radius:50%;background:#aaa}
+.live.on .dot{background:var(--g500);box-shadow:0 0 0 0 rgba(16,185,129,.6);animation:pulse 1.8s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 9px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+
+nav.tabs{display:flex;gap:6px;background:var(--white);padding:6px;border-radius:16px;border:1px solid var(--line);margin-bottom:18px;box-shadow:var(--shadow)}
+.tab{flex:1;border:0;background:transparent;padding:11px 8px;border-radius:12px;font-size:15px;font-weight:500;color:var(--muted);cursor:pointer;display:flex;gap:7px;align-items:center;justify-content:center}
+.tab svg{width:18px;height:18px}
+.tab.active{background:linear-gradient(135deg,var(--g500),var(--g700));color:#fff}
+@media (max-width:720px){
+  nav.tabs{position:fixed;left:10px;right:10px;bottom:10px;z-index:20;margin:0;padding:6px calc(6px + env(safe-area-inset-bottom,0)) 6px}
+  .tab{flex-direction:column;gap:3px;font-size:11.5px;padding:8px 2px}
+  .brand{font-size:19px}
+}
+
+.card{background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+@media (max-width:860px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{padding:14px 16px}
+.stat span{font-size:13px;color:var(--muted)}
+.stat b{display:block;font-size:26px;color:var(--g900);margin-top:2px}
+.stat.warn b{color:var(--warn)} .stat.bad b{color:var(--bad)}
+
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+input,select,textarea{font:inherit;color:inherit;border:1.5px solid var(--line);background:#fbfefc;border-radius:12px;padding:11px 13px;outline:none;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--g500);box-shadow:0 0 0 4px var(--g100)}
+.search{flex:1;min-width:200px}
+.btn{border:0;border-radius:12px;padding:11px 16px;font-size:15px;font-weight:500;cursor:pointer;display:inline-flex;gap:8px;align-items:center;justify-content:center;white-space:nowrap}
+.btn.pri{background:linear-gradient(135deg,var(--g500),var(--g700));color:#fff}
+.btn.pri:disabled{opacity:.5;cursor:not-allowed}
+.btn.ghost{background:var(--g50);color:var(--g700);border:1px solid var(--g100)}
+.btn.sm{padding:7px 11px;font-size:13px;border-radius:10px}
+.btn svg{width:17px;height:17px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.prod{padding:15px;position:relative;transition:transform .15s}
+.prod.flash{animation:flash 1.2s}
+@keyframes flash{0%{background:var(--g100)}100%{background:var(--white)}}
+.prod .sku{font-size:12px;color:var(--muted)}
+.prod h3{margin:2px 0 10px;font-size:16px;font-weight:600}
+.qty{display:flex;align-items:baseline;gap:6px}
+.qty b{font:700 32px 'Prompt';color:var(--g700)}
+.qty small{color:var(--muted)}
+.bar{height:7px;border-radius:9px;background:var(--g50);overflow:hidden;margin:10px 0}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--g300),var(--g600));border-radius:9px}
+.badge{position:absolute;top:14px;right:14px;font-size:12px;padding:3px 9px;border-radius:999px;font-weight:600}
+.b-ok{background:var(--g50);color:var(--g700)} .b-low{background:var(--warnbg);color:var(--warn)} .b-out{background:var(--badbg);color:var(--bad)}
+.prod.low .qty b{color:var(--warn)} .prod.out .qty b{color:var(--bad)}
+.prod .foot{display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.adj{display:flex;gap:6px}
+
+.so{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+@media (max-width:900px){.so{grid-template-columns:1fr}}
+label{display:block;font-size:13.5px;color:var(--muted);margin:0 0 6px;font-weight:500}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media (max-width:520px){.row{grid-template-columns:1fr}}
+.picker{display:grid;grid-template-columns:1fr 100px auto;gap:8px;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th{text-align:left;color:var(--muted);font-weight:500;font-size:13px;padding:8px 6px;border-bottom:1px solid var(--line)}
+td{padding:10px 6px;border-bottom:1px dashed var(--line);vertical-align:middle}
+td.n,th.n{text-align:right}
+.lineqty{width:72px;padding:7px 8px;text-align:center}
+.x{background:none;border:0;color:var(--bad);cursor:pointer;font-size:18px}
+.total{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font:600 20px 'Prompt';color:var(--g900)}
+.sig-box{border:2px dashed var(--g300);border-radius:14px;background:repeating-linear-gradient(0deg,#fff,#fff 38px,#f1faf5 39px);position:relative;touch-action:none}
+.sig-box canvas{display:block;width:100%;height:190px;cursor:crosshair}
+.sig-box .hint{position:absolute;inset:0;display:grid;place-items:center;color:#9bbcae;pointer-events:none;font-size:14px}
+.sig-actions{display:flex;justify-content:space-between;align-items:center;margin:8px 0 14px;font-size:13px;color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:26px 10px}
+
+.drop{border:2px dashed var(--g300);border-radius:16px;padding:28px;text-align:center;background:var(--g50);cursor:pointer}
+.drop.over{background:var(--g100)}
+.drop svg{width:40px;height:40px;color:var(--g600)}
+.tpl{font-size:13px;color:var(--muted);margin-top:10px}
+.preview{max-height:320px;overflow:auto;margin-top:12px;border:1px solid var(--line);border-radius:12px}
+.seg{display:inline-flex;background:var(--g50);border-radius:12px;padding:4px;gap:4px}
+.seg button{border:0;background:transparent;padding:8px 12px;border-radius:9px;cursor:pointer;font:500 14px 'Prompt';color:var(--muted)}
+.seg button.on{background:#fff;color:var(--g700);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+
+.hist-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 4px;border-bottom:1px dashed var(--line);cursor:pointer}
+.hist-item:hover{background:var(--g50)}
+.hist-item b{font-family:'Prompt'}
+.hist-item small{color:var(--muted);display:block}
+
+.modal{position:fixed;inset:0;background:rgba(6,40,30,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal.show{display:flex}
+.modal .card{max-width:620px;width:100%;max-height:90vh;overflow:auto}
+.doc h2{margin:0;color:var(--g900)}
+.doc .meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--muted);font-size:14px;margin:6px 0 14px}
+.doc .sig{margin-top:18px;text-align:center}
+.doc .sig img{max-width:260px;height:auto;border-bottom:1px solid var(--ink)}
+
+.toast{position:fixed;left:50%;top:18px;transform:translateX(-50%) translateY(-120%);background:var(--g900);color:#fff;padding:12px 18px;border-radius:14px;z-index:60;transition:.3s;font-size:15px;max-width:92vw;box-shadow:var(--shadow)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--bad)}
+.hide{display:none!important}
+
+@media print{
+  body{background:#fff} .wrap>*:not(.modal){display:none!important}
+  .modal{position:static;display:block!important;background:none;padding:0}
+  .modal .card{box-shadow:none;border:0;max-height:none}
+  .noprint{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></div>
+      <div>Clude AI<small>ระบบสต็อกสินค้าเรียลไทม์</small></div>
+    </div>
+    <div class="live" id="live"><span class="dot"></span><span id="liveTxt">กำลังเชื่อมต่อ…</span></div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-v="stock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>สต็อก</button>
+    <button class="tab" data-v="sale"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>ออก Sale Order</button>
+    <button class="tab" data-v="hist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>ประวัติ SO</button>
+    <button class="tab" data-v="imp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>นำเข้าสินค้า</button>
+  </nav>
+
+  <!-- STOCK -->
+  <section id="v-stock">
+    <div class="stats">
+      <div class="card stat"><span>สินค้าทั้งหมด</span><b id="sCount">–</b></div>
+      <div class="card stat"><span>จำนวนคงเหลือรวม</span><b id="sUnits">–</b></div>
+      <div class="card stat warn"><span>ใกล้หมด</span><b id="sLow">–</b></div>
+      <div class="card stat bad"><span>หมดสต็อก</span><b id="sOut">–</b></div>
+    </div>
+    <div class="toolbar">
+      <input class="search" id="q" placeholder="ค้นหาชื่อสินค้า หรือรหัส…">
+      <select id="filter" style="width:auto"><option value="all">ทั้งหมด</option><option value="low">ใกล้หมด</option><option value="out">หมดสต็อก</option></select>
+      <button class="btn ghost" id="exportBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></svg>ส่งออก CSV</button>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- SALE ORDER -->
+  <section id="v-sale" class="hide">
+    <div class="so">
+      <div class="card">
+        <h3 style="margin:0 0 14px">รายการสินค้า</h3>
+        <div class="picker">
+          <select id="pick"></select>
+          <input id="pickQty" type="number" min="1" value="1" inputmode="numeric">
+          <button class="btn pri" id="addLine">+ เพิ่ม</button>
+        </div>
+        <table><thead><tr><th>สินค้า</th><th class="n">ราคา</th><th class="n">จำนวน</th><th class="n">รวม</th><th></th></tr></thead><tbody id="lines"></tbody></table>
+        <div class="empty" id="noLines">ยังไม่มีสินค้าในใบสั่งขาย</div>
+        <div class="total"><span>ยอดรวม</span><span id="soTotal">฿0.00</span></div>
+      </div>
+      <div class="card">
+        <h3 style="margin:0 0 14px">ข้อมูลผู้ขาย</h3>
+        <div class="row">
+          <div><label>ชื่อลูกค้า</label><input id="cust" placeholder="ไม่บังคับ"></div>
+          <div><label>ชื่อผู้ขาย *</label><input id="seller" placeholder="เช่น สมชาย"></div>
+        </div>
+        <label>หมายเหตุ</label><textarea id="note" rows="2" style="margin-bottom:12px"></textarea>
+        <label>ลายเซ็นผู้ขาย *</label>
+        <div class="sig-box"><canvas id="sig"></canvas><div class="hint" id="sigHint">เซ็นชื่อตรงนี้ด้วยนิ้วหรือเมาส์</div></div>
+        <div class="sig-actions"><span>ลายเซ็นจะถูกแนบไปกับใบ Sale Order</span><button class="btn ghost sm" id="sigClear">ล้างลายเซ็น</button></div>
+        <button class="btn pri" id="submitSO" style="width:100%;padding:14px">บันทึก Sale Order และตัดสต็อก</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- HISTORY -->
+  <section id="v-hist" class="hide">
+    <div class="card"><h3 style="margin:0 0 6px">ใบ Sale Order ล่าสุด</h3><div id="hist"></div></div>
+  </section>
+
+  <!-- IMPORT -->
+  <section id="v-imp" class="hide">
+    <div class="card">
+      <h3 style="margin:0 0 12px">นำเข้าสินค้าจาก CSV / Excel</h3>
+      <div class="drop" id="drop">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 18v-6M9 15l3-3 3 3"/></svg>
+        <div style="font:600 16px 'Prompt';margin-top:6px">ลากไฟล์มาวาง หรือแตะเพื่อเลือกไฟล์</div>
+        <div class="tpl">รองรับ .csv .xlsx .xls · คอลัมน์: <b>sku, name, unit, price, stock, min_stock</b> (หรือ รหัส, ชื่อสินค้า, หน่วย, ราคา, จำนวน, ขั้นต่ำ)</div>
+        <input type="file" id="file" accept=".csv,.xlsx,.xls" hidden>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px">
+        <div class="seg" id="mode"><button class="on" data-m="set">ตั้งยอดสต็อกใหม่</button><button data-m="add">บวกเพิ่มจากเดิม</button></div>
+        <button class="btn ghost sm" id="tplBtn">ดาวน์โหลดไฟล์ตัวอย่าง</button>
+        <span style="flex:1"></span>
+        <button class="btn pri" id="doImport" disabled>นำเข้า</button>
+      </div>
+      <div class="preview hide" id="preview"></div>
+    </div>
+  </section>
+
+  <!-- SO modal -->
+  <div class="modal" id="modal"><div class="card doc" id="doc"></div></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== ตั้งค่า Supabase =====
+const SUPABASE_URL = 'https://ralmsrokevjscxvdztfy.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_T5AZAV3h9Vyt1uH3Y8HJ2Q_5V3ha4vA';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const baht = n => '฿' + Number(n||0).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmt = n => Number(n||0).toLocaleString('th-TH');
+let products = [], lines = [], importRows = [], importMode = 'set';
+
+function toast(msg, err){const t=$('#toast');t.textContent=msg;t.className='toast show'+(err?' err':'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',3200)}
+
+// ===== Tabs =====
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));
+  ['stock','sale','hist','imp'].forEach(v=>$('#v-'+v).classList.toggle('hide',v!==b.dataset.v));
+  if(b.dataset.v==='sale') setTimeout(sizeSig,30);
+  if(b.dataset.v==='hist') loadHist();
+});
+
+// ===== Stock =====
+function status(p){return p.stock<=0?'out':(p.stock<=p.min_stock?'low':'ok')}
+async function loadProducts(){
+  const {data,error}=await db.from('products').select('*').order('name');
+  if(error) return toast('โหลดสินค้าไม่ได้: '+error.message,true);
+  products=data; renderStock(); renderPicker();
+}
+function renderStock(flashId){
+  const q=$('#q').value.trim().toLowerCase(), f=$('#filter').value;
+  $('#sCount').textContent=fmt(products.length);
+  $('#sUnits').textContent=fmt(products.reduce((a,p)=>a+p.stock,0));
+  $('#sLow').textContent=fmt(products.filter(p=>status(p)==='low').length);
+  $('#sOut').textContent=fmt(products.filter(p=>status(p)==='out').length);
+  const max=Math.max(1,...products.map(p=>p.stock));
+  const list=products.filter(p=>(!q||p.name.toLowerCase().includes(q)||p.sku.toLowerCase().includes(q))&&(f==='all'||status(p)===f));
+  $('#grid').innerHTML=list.length?list.map(p=>{const s=status(p);return `
+    <div class="card prod ${s} ${p.id===flashId?'flash':''}" data-id="${p.id}">
+      <span class="badge b-${s}">${s==='out'?'หมด':s==='low'?'ใกล้หมด':'พร้อมขาย'}</span>
+      <div class="sku">${esc(p.sku)}</div><h3>${esc(p.name)}</h3>
+      <div class="qty"><b>${fmt(p.stock)}</b><small>${esc(p.unit)} คงเหลือ</small></div>
+      <div class="bar"><i style="width:${Math.min(100,p.stock/max*100)}%"></i></div>
+      <div class="foot"><span>${baht(p.price)}</span>
+        <div class="adj"><button class="btn ghost sm" onclick="adjust(${p.id},-1)">−</button><button class="btn ghost sm" onclick="adjust(${p.id})">+ เติม</button></div></div>
+    </div>`}).join(''):'<div class="card empty" style="grid-column:1/-1">ไม่พบสินค้า</div>';
+}
+$('#q').oninput=()=>renderStock(); $('#filter').onchange=()=>renderStock();
+async function adjust(id,delta){
+  if(delta===undefined){const v=prompt('เติมสต็อกกี่หน่วย?','1'); if(v===null) return; delta=parseInt(v,10); if(!delta) return toast('จำนวนไม่ถูกต้อง',true);}
+  const {error}=await db.rpc('adjust_stock',{p_id:id,p_delta:delta});
+  if(error) toast(error.message,true); else toast(delta>0?`เติมสต็อก +${delta}`:`ลดสต็อก ${delta}`);
+}
+$('#exportBtn').onclick=()=>{
+  const rows=[['sku','name','unit','price','stock','min_stock'],...products.map(p=>[p.sku,p.name,p.unit,p.price,p.stock,p.min_stock])];
+  const csv='﻿'+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='stock-'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+};
+
+// ===== Realtime =====
+db.channel('stock-live')
+  .on('postgres_changes',{event:'*',schema:'public',table:'products'},payload=>{
+    if(payload.eventType==='DELETE'){products=products.filter(p=>p.id!==payload.old.id)}
+    else{const i=products.findIndex(p=>p.id===payload.new.id); if(i>=0) products[i]=payload.new; else {products.push(payload.new);products.sort((a,b)=>a.name.localeCompare(b.name,'th'))}}
+    renderStock(payload.new?.id); renderPicker(); renderLines();
+  })
+  .on('postgres_changes',{event:'*',schema:'public',table:'sale_orders'},()=>{ if(!$('#v-hist').classList.contains('hide')) loadHist(); })
+  .subscribe(st=>{const on=st==='SUBSCRIBED';$('#live').classList.toggle('on',on);$('#liveTxt').textContent=on?'เรียลไทม์':'ออฟไลน์'});
+
+// ===== Sale Order =====
+function renderPicker(){
+  const cur=$('#pick').value;
+  $('#pick').innerHTML='<option value="">— เลือกสินค้า —</option>'+products.map(p=>`<option value="${p.id}" ${p.stock<=0?'disabled':''}>${esc(p.name)} (${esc(p.sku)}) · เหลือ ${fmt(p.stock)}</option>`).join('');
+  $('#pick').value=cur;
+}
+$('#addLine').onclick=()=>{
+  const id=+$('#pick').value, qty=parseInt($('#pickQty').value,10);
+  if(!id) return toast('เลือกสินค้าก่อน',true);
+  if(!(qty>0)) return toast('จำนวนไม่ถูกต้อง',true);
+  const ex=lines.find(l=>l.product_id===id); if(ex) ex.qty+=qty; else lines.push({product_id:id,qty});
+  $('#pickQty').value=1; $('#pick').value=''; renderLines();
+};
+function renderLines(){
+  let total=0, over=false;
+  $('#lines').innerHTML=lines.map((l,i)=>{const p=products.find(x=>x.id===l.product_id); if(!p) return '';
+    const bad=l.qty>p.stock; over=over||bad; total+=l.qty*p.price;
+    return `<tr><td>${esc(p.name)}<br><small style="color:${bad?'var(--bad)':'var(--muted)'}">เหลือ ${fmt(p.stock)} ${esc(p.unit)}${bad?' · ไม่พอ':''}</small></td>
+      <td class="n">${baht(p.price)}</td><td class="n"><input class="lineqty" type="number" min="1" value="${l.qty}" onchange="setQty(${i},this.value)"></td>
+      <td class="n">${baht(l.qty*p.price)}</td><td><button class="x" onclick="delLine(${i})">×</button></td></tr>`}).join('');
+  $('#noLines').classList.toggle('hide',lines.length>0);
+  $('#soTotal').textContent=baht(total);
+  $('#submitSO').disabled=over;
+}
+function setQty(i,v){v=parseInt(v,10);if(v>0)lines[i].qty=v;renderLines()}
+function delLine(i){lines.splice(i,1);renderLines()}
+
+// signature pad
+const cv=$('#sig'), ctx=cv.getContext('2d'); let drawing=false, signed=false, last=null;
+function sizeSig(){const r=cv.getBoundingClientRect(); if(!r.width) return; const d=window.devicePixelRatio||1;
+  const keep=signed?cv.toDataURL():null; cv.width=r.width*d; cv.height=r.height*d; ctx.scale(d,d);
+  ctx.lineWidth=2.4;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#064e3b';
+  if(keep){const im=new Image();im.onload=()=>ctx.drawImage(im,0,0,r.width,r.height);im.src=keep}}
+window.addEventListener('resize',sizeSig);
+const pos=e=>{const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}};
+cv.addEventListener('pointerdown',e=>{drawing=true;last=pos(e);cv.setPointerCapture(e.pointerId);signed=true;$('#sigHint').classList.add('hide')});
+cv.addEventListener('pointermove',e=>{if(!drawing)return;const p=pos(e);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(p.x,p.y);ctx.stroke();last=p});
+['pointerup','pointercancel','pointerleave'].forEach(ev=>cv.addEventListener(ev,()=>drawing=false));
+function clearSig(){ctx.clearRect(0,0,cv.width,cv.height);signed=false;$('#sigHint').classList.remove('hide')}
+$('#sigClear').onclick=clearSig;
+
+$('#submitSO').onclick=async()=>{
+  if(!lines.length) return toast('ยังไม่ได้เพิ่มสินค้า',true);
+  if(!$('#seller').value.trim()) return toast('กรุณาใส่ชื่อผู้ขาย',true);
+  if(!signed) return toast('กรุณาเซ็นชื่อผู้ขาย',true);
+  const btn=$('#submitSO'); btn.disabled=true; btn.textContent='กำลังบันทึก…';
+  const {data,error}=await db.rpc('create_sale_order',{p_customer:$('#cust').value,p_seller:$('#seller').value,
+    p_signature:cv.toDataURL('image/png'),p_note:$('#note').value,p_items:lines});
+  btn.disabled=false; btn.textContent='บันทึก Sale Order และตัดสต็อก';
+  if(error) return toast(error.message,true);
+  toast(`บันทึก ${data.so_no} แล้ว ตัดสต็อกเรียบร้อย`);
+  try{localStorage.setItem('clude_seller',$('#seller').value)}catch(e){}
+  lines=[];renderLines();$('#cust').value='';$('#note').value='';clearSig();
+  openSO(data.id);
+};
+try{$('#seller').value=localStorage.getItem('clude_seller')||''}catch(e){}
+
+// ===== History & doc =====
+async function loadHist(){
+  const {data,error}=await db.from('sale_orders').select('id,so_no,customer,seller_name,total,created_at').order('created_at',{ascending:false}).limit(100);
+  if(error) return toast(error.message,true);
+  $('#hist').innerHTML=data.length?data.map(o=>`<div class="hist-item" onclick="openSO(${o.id})">
+    <div><b>${esc(o.so_no)}</b><small>${new Date(o.created_at).toLocaleString('th-TH')} · ผู้ขาย ${esc(o.seller_name)}${o.customer?' · ลูกค้า '+esc(o.customer):''}</small></div>
+    <b style="color:var(--g700)">${baht(o.total)}</b></div>`).join(''):'<div class="empty">ยังไม่มีใบ Sale Order</div>';
+}
+async function openSO(id){
+  const {data:o}=await db.from('sale_orders').select('*').eq('id',id).single();
+  const {data:items}=await db.from('sale_order_items').select('*').eq('order_id',id).order('id');
+  if(!o) return;
+  $('#doc').innerHTML=`<h2>ใบสั่งขาย (Sale Order)</h2>
+    <div class="meta"><span><b>${esc(o.so_no)}</b></span><span>${new Date(o.created_at).toLocaleString('th-TH')}</span></div>
+    <div style="margin-bottom:10px">ลูกค้า: ${esc(o.customer||'-')}</div>
+    <table><thead><tr><th>#</th><th>สินค้า</th><th class="n">จำนวน</th><th class="n">ราคา</th><th class="n">รวม</th></tr></thead>
+    <tbody>${items.map((it,i)=>`<tr><td>${i+1}</td><td>${esc(it.name)}<br><small style="color:var(--muted)">${esc(it.sku)}</small></td><td class="n">${fmt(it.qty)}</td><td class="n">${baht(it.price)}</td><td class="n">${baht(it.qty*it.price)}</td></tr>`).join('')}</tbody></table>
+    <div class="total"><span>ยอดรวม</span><span>${baht(o.total)}</span></div>
+    ${o.note?`<div style="margin-top:8px;color:var(--muted)">หมายเหตุ: ${esc(o.note)}</div>`:''}
+    <div class="sig"><img src="${esc(o.signature)}" alt="ลายเซ็น"><div>( ${esc(o.seller_name)} )</div><small style="color:var(--muted)">ผู้ขาย</small></div>
+    <div class="noprint" style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px">
+      <button class="btn ghost" onclick="$('#modal').classList.remove('show')">ปิด</button>
+      <button class="btn pri" onclick="window.print()">พิมพ์ / PDF</button></div>`;
+  $('#modal').classList.add('show');
+}
+$('#modal').onclick=e=>{if(e.target.id==='modal')$('#modal').classList.remove('show')};
+
+// ===== Import =====
+const MAP={sku:'sku','รหัส':'sku','รหัสสินค้า':'sku',code:'sku',name:'name','ชื่อ':'name','ชื่อสินค้า':'name','สินค้า':'name',
+  unit:'unit','หน่วย':'unit',price:'price','ราคา':'price',stock:'stock','จำนวน':'stock','คงเหลือ':'stock',qty:'stock',
+  min_stock:'min_stock','ขั้นต่ำ':'min_stock','จุดสั่งซื้อ':'min_stock',min:'min_stock'};
+const drop=$('#drop'), file=$('#file');
+drop.onclick=()=>file.click();
+drop.ondragover=e=>{e.preventDefault();drop.classList.add('over')};
+drop.ondragleave=()=>drop.classList.remove('over');
+drop.ondrop=e=>{e.preventDefault();drop.classList.remove('over');if(e.dataTransfer.files[0])readFile(e.dataTransfer.files[0])};
+file.onchange=()=>{if(file.files[0])readFile(file.files[0]);file.value=''};
+function readFile(f){
+  const r=new FileReader();
+  r.onload=e=>{try{
+    const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
+    const raw=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
+    importRows=raw.map(row=>{const o={};for(const k in row){const key=MAP[String(k).trim().toLowerCase()]||MAP[String(k).trim()];if(key)o[key]=String(row[k]).trim()}return o})
+      .filter(o=>o.sku&&o.name);
+    if(!importRows.length) return toast('ไม่พบคอลัมน์ sku และ name ในไฟล์',true);
+    $('#preview').classList.remove('hide');
+    $('#preview').innerHTML=`<table><thead><tr><th>sku</th><th>ชื่อ</th><th>หน่วย</th><th class="n">ราคา</th><th class="n">จำนวน</th><th class="n">ขั้นต่ำ</th></tr></thead><tbody>${
+      importRows.map(o=>`<tr><td>${esc(o.sku)}</td><td>${esc(o.name)}</td><td>${esc(o.unit||'ชิ้น')}</td><td class="n">${esc(o.price||0)}</td><td class="n">${esc(o.stock||0)}</td><td class="n">${esc(o.min_stock||0)}</td></tr>`).join('')}</tbody></table>`;
+    $('#doImport').disabled=false; $('#doImport').textContent=`นำเข้า ${importRows.length} รายการ`;
+  }catch(err){toast('อ่านไฟล์ไม่ได้: '+err.message,true)}};
+  r.readAsArrayBuffer(f);
+}
+document.querySelectorAll('#mode button').forEach(b=>b.onclick=()=>{importMode=b.dataset.m;document.querySelectorAll('#mode button').forEach(x=>x.classList.toggle('on',x===b))});
+$('#doImport').onclick=async()=>{
+  $('#doImport').disabled=true;
+  const {data,error}=await db.rpc('import_products',{p_rows:importRows,p_mode:importMode});
+  if(error){$('#doImport').disabled=false;return toast(error.message,true)}
+  toast(`นำเข้าแล้ว ${data} รายการ`); importRows=[]; $('#preview').classList.add('hide'); $('#doImport').textContent='นำเข้า';
+  loadProducts();
+};
+$('#tplBtn').onclick=()=>{
+  const ws=XLSX.utils.aoa_to_sheet([['sku','name','unit','price','stock','min_stock'],['P100','ตัวอย่างสินค้า','ชิ้น',150,30,5]]);
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'products');XLSX.writeFile(wb,'clude-ai-template.xlsx');
+};
+
+loadProducts(); renderLines();
+</script>
+</body>
+</html>
